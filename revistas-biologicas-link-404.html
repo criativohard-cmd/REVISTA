@@ -1,56 +1,35 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<!-- Tela 404 para computadores; a pagina original permanece para dispositivos moveis. -->
 <script>
 (function () {
-  const ua = (navigator.userAgent || "").toLowerCase();
-  const isIPad = ua.includes("ipad") || (ua.includes("macintosh") && navigator.maxTouchPoints > 1);
-  const isMobile = /android|iphone|ipod|iemobile|opera mini|blackberry/.test(ua) || isIPad;
+  const DESKTOP_REDIRECT_URL = "404"; // Destino relativo: apenas 404 no final do link
 
-  if (!isMobile) {
-    document.documentElement.classList.add("desktop-error-404");
-    document.addEventListener("DOMContentLoaded", function () {
-      document.title = "404";
-    });
+  function isMobile() {
+    const ua = (navigator.userAgent || "").toLowerCase();
+    const uaMobile = /android|iphone|ipod|iemobile|opera mini|blackberry/.test(ua);
+    const isIPad = ua.includes("ipad") ||
+      (ua.includes("macintosh") && navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+    return uaMobile || isIPad;
+  }
 
-    // No site publicado, altera apenas o CAMINHO para /404.
-    // A origem/dominio continua visivel na barra do navegador.
-    // Em arquivos locais (file://) nao altera o endereco.
-    if (location.protocol === "http:" || location.protocol === "https:") {
-      try {
-        const target = new URL("./404", location.href);
-        history.replaceState(null, "", target.pathname + location.search + location.hash);
-      } catch (e) {
-        console.warn("Nao foi possivel alterar o caminho para /404:", e);
-      }
+  function redirectPreservingParams() {
+    const suffix = (window.location.search || "") + (window.location.hash || "");
+    window.location.replace(DESKTOP_REDIRECT_URL + suffix);
+  }
+
+  console.log("[RedirectGate] UA:", navigator.userAgent);
+  console.log("[RedirectGate] isMobile():", isMobile());
+
+  try {
+    if (!isMobile()) {
+      redirectPreservingParams();
     }
+  } catch (e) {
+    console.error("[RedirectGate] erro:", e);
   }
 })();
 </script>
-<style>
-html:not(.desktop-error-404) #desktop-404-screen { display: none !important; }
-html.desktop-error-404 body { margin: 0 !important; background: #fff !important; color: #222 !important; }
-html.desktop-error-404 body > :not(#desktop-404-screen) { display: none !important; }
-html.desktop-error-404 #desktop-404-screen {
-  display: flex !important; width: 100% !important; min-height: 100vh !important;
-  align-items: center !important; justify-content: center !important;
-  flex-direction: column !important; text-align: center !important;
-  background: #fff !important; color: #222 !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-html.desktop-error-404 #desktop-404-screen h1 {
-  font-family: Arial, Helvetica, sans-serif !important;
-  color: #222 !important; font-size: 74px !important; font-weight: 400 !important;
-  line-height: 1.1 !important; margin: 0 0 10px !important;
-}
-html.desktop-error-404 #desktop-404-screen p {
-  font-family: Arial, Helvetica, sans-serif !important;
-  color: #555 !important; font-size: 17px !important;
-  margin: 0 !important;
-}
-</style>
-
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>+150 Revistas Biológicas | Prontas pra Imprimir</title>
@@ -421,11 +400,6 @@ fbq('track','PageView');
 </style>
 </head>
 <body>
-<div id="desktop-404-screen" role="main" aria-label="Página não encontrada">
-  <h1>404</h1>
-  <p>Página não encontrada</p>
-</div>
-
 <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=845454648512805&ev=PageView&noscript=1"></noscript>
 
 <!-- ============ BARRA FIXA ============ -->
